@@ -4,6 +4,10 @@ project(evsh)
 
 set(CMAKE_CXX_STANDARD 17)
 
-file(GLOB evsh_SRC "*.h" "*.cpp")
-
-add_executable(evsh ${evsh_SRC})
+add_subdirectory(src)
+option(PACKAGE_TESTS "Build the tests" ON)
+if(PACKAGE_TESTS)
+    enable_testing()
+    include(GoogleTest)
+    add_subdirectory(test)
+endif()

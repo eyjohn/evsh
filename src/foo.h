@@ -1,0 +1,3 @@
+namespace evsh {
+int foo();
+}
