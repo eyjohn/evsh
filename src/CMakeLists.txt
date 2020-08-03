@@ -1,6 +1,6 @@
 set(BINARY ${CMAKE_PROJECT_NAME})
 
-set(SOURCES foo.cpp)
+set(SOURCES commandline.cpp)
 
 add_library(${BINARY}_lib STATIC ${SOURCES})
 target_include_directories(${BINARY}_lib PUBLIC ${CMAKE_CURRENT_LIST_DIR})
