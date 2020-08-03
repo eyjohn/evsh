@@ -3,13 +3,18 @@
 #include <vector>
 namespace evsh {
 
-struct CommandLine {
-    std::string command;
-    std::vector<std::string> arguments;
-    bool operator==(const CommandLine&) const;
-    explicit operator bool() const;
+using CommandLine = std::vector<std::string>;
+
+// Temporary object that represents arguments
+struct C_CommandLine {
+    const char* const* data() const;
+    C_CommandLine(const CommandLine& commandLine);
+    ~C_CommandLine();
+
+private:
+    const char* const* d_data;
 };
 
 // Parse a text line into a CommandLine
 CommandLine parse(std::string_view line);
-}
+} // namespace evsh
