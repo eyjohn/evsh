@@ -25,6 +25,11 @@ TEST(TestCommandLine, ParseCommandWithManyArgs)
     EXPECT_THAT(parse("command arg1 arg2"), Eq(CommandLine{ "command", "arg1", "arg2" }));
 }
 
+TEST(TestCommandLine, ParseCommandWithQuotedArg)
+{
+    EXPECT_THAT(parse("command \"quoted arg\""), Eq(CommandLine{ "command", "quoted arg" }));
+}
+
 TEST(TestC_CommandLine, CommandOnly)
 {
     const CommandLine cmdLine{ "command" };

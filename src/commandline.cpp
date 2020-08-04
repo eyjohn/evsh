@@ -1,5 +1,6 @@
 #include "commandline.h"
 #include <algorithm>
+#include <iomanip>
 #include <sstream>
 
 using namespace std;
@@ -21,7 +22,7 @@ CommandLine parse(string_view line)
     CommandLine out;
     auto str = std::string{};
     auto iss = std::istringstream{ line.data() };
-    while (iss >> str) {
+    while (iss >> quoted(str)) {
         out.push_back(std::move(str));
     }
     return out;
