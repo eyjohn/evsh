@@ -1,4 +1,3 @@
-enable_testing()
 include(GoogleTest)
 
 set(BINARY ${CMAKE_PROJECT_NAME})
