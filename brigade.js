@@ -1,19 +1,14 @@
 const { events, Job } = require("brigadier");
 
-function notifyGithub(status, description, e, p) {
-  var j = new Job("gh-" + status, "technosophos/github-notify:latest");
-  j.env = {
-    GH_REPO: p.repo.name,
-    GH_STATE: status,
-    GH_DESCRIPTION: description,
-    GH_CONTEXT: "brigade",
-    GH_TOKEN: p.repo.token,
-    GH_COMMIT: e.revision.commit
-  };
-  return j.run();
-}
+// GitHub Check events to watch for
+//
+// Note that a GitHub App will automatically generate these events
+// from a `push` event, so we don't need an explicit push event handler any longer
+events.on("check_suite:requested", checkRequested);
+events.on("check_suite:rerequested", checkRequested);
+events.on("check_run:rerequested", checkRequested);
 
-function createBuildAndTestJob() {
+function createBuildAndTestJob(e, p) {
   var job = new Job("build-and-test");
 
   job.image = "rikorose/gcc-cmake:gcc-9";
@@ -33,15 +28,49 @@ function createBuildAndTestJob() {
   return job;
 }
 
-async function runBuildAndTest(event, project) {
-  const job = createBuildAndTestJob();
-  notifyGithub("pending", "Starting build and test", event, project);
-  try {
-    await buildJob.run();
-    notifyGithub("success", "Successfully finished build and test", event, project);
-  } catch (err) {
-    notifyGithub("failure", "Failed build and test, error: " + err, event, project);
-  }
-}
+// This runs our main test job, updating GitHub along the way
+function checkRequested(e, p) {
+  console.log("check requested");
 
-events.on("pull_request", runBuildAndTest);
+  // This Check Run image handles updating GitHub
+  const checkRunImage = "brigadecore/brigade-github-check-run:latest";
+
+  // Common configuration
+  const env = {
+    CHECK_PAYLOAD: e.payload,
+    CHECK_NAME: "Brigade",
+    CHECK_TITLE: "Run Tests",
+  };
+
+  // For convenience, we'll create three jobs: one for each GitHub Check
+  // stage.
+  const start = new Job("start-run", checkRunImage);
+  start.imageForcePull = true;
+  start.env = env;
+  start.env.CHECK_SUMMARY = "Beginning test run";
+
+  const end = new Job("end-run", checkRunImage);
+  end.imageForcePull = true;
+  end.env = env;
+
+  // Now we run the jobs in order:
+  // - Notify GitHub of start
+  // - Run the tests
+  // - Notify GitHub of completion
+  //
+  // On error, we catch the error and notify GitHub of a failure.
+  start.run().then(() => {
+    return createBuildAndTestJob(e, p).run()
+  }).then( (result) => {
+    end.env.CHECK_CONCLUSION = "success"
+    end.env.CHECK_SUMMARY = "Build completed"
+    end.env.CHECK_TEXT = result.toString()
+    return end.run()
+  }).catch( (err) => {
+    // In this case, we mark the ending failed.
+    end.env.CHECK_CONCLUSION = "failure"
+    end.env.CHECK_SUMMARY = "Build failed"
+    end.env.CHECK_TEXT = `Error: ${ err }`
+    return end.run()
+  });
+}
