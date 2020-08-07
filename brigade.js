@@ -14,7 +14,7 @@ function createBuildAndTestJob(e, p) {
   job.image = "rikorose/gcc-cmake:gcc-9";
 
   job.tasks = [
-    "apt update && apt-get install $(grep -vE \"^\s*#\" /src/dpkg-build-depends.lst | tr \"\n\" \" \")",
+    "apt update && apt -y install $(grep -vE \"^\s*#\" /src/dpkg-build-depends.lst | tr \"\n\" \" \")",
     "cd /build",
     "cmake /src",
     "make",
