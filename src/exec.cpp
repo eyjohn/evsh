@@ -1,6 +1,7 @@
 #include "exec.h"
 #include <cerrno>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <string>
 #include <sys/types.h>
@@ -23,17 +24,8 @@ int exec(const CommandLine& commandLine)
         return -1;
     } else { // Child
         C_CommandLine c_cmdLine{ commandLine };
-        const auto rc = execvp(c_cmdLine.data()[0], const_cast<char* const*>(c_cmdLine.data()));
-        std::string error{ commandLine[0] };
-        switch (errno) {
-        case EACCES:
-            error += ": permission denied";
-            break;
-        default:
-            error += ": command not found";
-            break;
-        }
-        std::cerr << error << std::endl;
+        execvp(c_cmdLine.data()[0], const_cast<char* const*>(c_cmdLine.data()));
+        std::cerr << commandLine[0] << ": " << strerror(errno) << std::endl;
         std::exit(EXIT_FAILURE);
     }
 }
