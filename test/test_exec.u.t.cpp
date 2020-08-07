@@ -9,11 +9,6 @@
 using namespace ::testing;
 using namespace evsh;
 
-TEST(TestExec, EmptyCommandLine)
-{
-    EXPECT_THAT(exec({}), Eq(0));
-}
-
 TEST(TestExec, InvalidCommand)
 {
     EXPECT_THAT(exec({"./nonexistent_command"}), Eq(EXIT_FAILURE));
