@@ -14,7 +14,7 @@ function notifyGithub(status, description, e, p) {
 }
 
 function createBuildAndTestJob() {
-  var job = new Job("buildAndTest");
+  var job = new Job("build-and-test");
 
   job.image = "rikorose/gcc-cmake:gcc-9";
 
