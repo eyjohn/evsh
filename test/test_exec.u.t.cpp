@@ -23,3 +23,8 @@ TEST(TestExec, ValidCommand)
 {
     EXPECT_THAT(exec({"sh", "-c", "exit 42"}), Eq(42));
 }
+
+TEST(TestExec, Fail)
+{
+    EXPECT_TRUE(false);
+}
