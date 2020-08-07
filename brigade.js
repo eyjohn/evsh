@@ -35,12 +35,12 @@ function createBuildAndTestJob() {
 
 async function runBuildAndTest(event, project) {
   const job = createBuildAndTestJob();
-  notifyGithub("pending", "Starting build and test");
+  notifyGithub("pending", "Starting build and test", event, project);
   try {
     await buildJob.run();
-    notifyGithub("success", "Successfully finished build and test");
+    notifyGithub("success", "Successfully finished build and test", event, project);
   } catch (err) {
-    notifyGithub("failure", "Failed build and test, error: " + err);
+    notifyGithub("failure", "Failed build and test, error: " + err, event, project);
   }
 }
 
