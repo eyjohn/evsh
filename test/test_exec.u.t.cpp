@@ -17,4 +17,5 @@ TEST(TestExec, InvalidCommand)
 TEST(TestExec, ValidCommand)
 {
     EXPECT_THAT(exec({"sh", "-c", "exit 42"}), Eq(42));
+    EXPECT_TRUE(false);
 }
