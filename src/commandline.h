@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include <string>
 #include <string_view>
 #include <variant>
@@ -6,38 +7,34 @@
 
 namespace evsh {
 
-using CommandLine = std::vector<std::string>;
+struct CommandLine {
+    // Types
+    using Arguments = std::vector<std::string>;
+    struct EmptyRedirect {
+    };
+    struct FileRedirect {
+        std::string filename;
+        bool append;
+    };
+    struct RemapRedirect {
+        int fd;
+    };
+    using Redirect = std::variant<EmptyRedirect, FileRedirect, RemapRedirect>;
+    using Redirects = std::array<Redirect, 3>;
 
-// struct CommandLine {
-//     // Types
-//     using Arguments = std::vector<std::string>;
-//     struct FileRedirect {
-//         std::string filename;
-//     };
-//     struct RemapRedirect {
-//         int fd;
-//     };
-//     using Redirect = std::variant<FileRedirect, RemapRedirect>;
-//     // using
+    // Data
+    Arguments arguments;
+    Redirects redirects;
+};
 
-//     // Data
-//     Arguments arguments;
-//     Redirect redirects[3];
-// };
-
-
-// std::variant<int, bool> foo;
-// foo.
 // Temporary object that represents arguments
-struct C_CommandLine {
+struct C_CommandLineArguments {
     const char* const* data() const;
-    C_CommandLine(const CommandLine& commandLine);
-    ~C_CommandLine();
+    C_CommandLineArguments(const CommandLine::Arguments& arguments);
+    ~C_CommandLineArguments();
 
 private:
     const char* const* d_data;
 };
 
-// Parse a text line into a CommandLine
-CommandLine parse(std::string_view line);
 } // namespace evsh
