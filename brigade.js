@@ -40,6 +40,7 @@ function checkRequested(e, p) {
     CHECK_PAYLOAD: e.payload,
     CHECK_NAME: "Brigade",
     CHECK_TITLE: "Run Tests",
+    CHECK_DETAILS_URL: `https://kashti.brigade.evdev.me/builds/${e.buildID}`,
   };
 
   // For convenience, we'll create three jobs: one for each GitHub Check
