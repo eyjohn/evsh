@@ -31,7 +31,6 @@ function createBuildAndTestJob(e, p) {
 // This runs our main test job, updating GitHub along the way
 function checkRequested(e, p) {
   console.log("check requested");
-  return;
 
   // This Check Run image handles updating GitHub
   const checkRunImage = "brigadecore/brigade-github-check-run:latest";
