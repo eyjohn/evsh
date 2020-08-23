@@ -10,11 +10,11 @@ namespace {
 
     int cd(const CommandLine& commandLine)
     {
-        if (commandLine.size() < 2) {
+        if (commandLine.arguments.size() < 2) {
             std::cerr << "cd: No path specified" << std::endl;
             return EXIT_FAILURE;
         }
-        const auto rc = chdir(commandLine[1].data());
+        const auto rc = chdir(commandLine.arguments[1].data());
         if (rc) {
             std::cerr << "cd: " << strerror(errno) << std::endl;
         }
@@ -37,7 +37,7 @@ void CommandRegistry::add(const std::string_view name, Command command) {
 
 std::optional<int> CommandRegistry::tryExec(const CommandLine& commandLine) const
 {
-    const auto search = d_registry.find(commandLine[0]);
+    const auto search = d_registry.find(commandLine.arguments[0]);
     if (search != d_registry.end()) {
         return search->second(commandLine);
     }

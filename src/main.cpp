@@ -1,6 +1,6 @@
-#include "commandline.h"
 #include "commandregistry.h"
 #include "exec.h"
+#include "parse.h"
 #include <csignal>
 #include <iostream>
 
@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
         }
         const auto commandLine = parse(line);
         int rc;
-        if (!commandLine.empty()) {
+        if (!commandLine.arguments.empty()) {
             const auto res = commandRegistry.tryExec(commandLine);
             if (res.has_value()) {
                 rc = res.value();
