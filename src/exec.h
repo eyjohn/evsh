@@ -7,4 +7,7 @@ namespace evsh {
 // Return 0 if no command (empty commandLine) passed.
 // Return -1 and log to stderr if failed to execute the command.
 int exec(const CommandLine& commandLine);
+
+// Kills the current child process, if running.
+int kill();
 }
