@@ -71,7 +71,7 @@ namespace {
         }
         return true;
     }
-
+    pid_t childPid = 0;
 }
 
 int exec(const CommandLine& commandLine)
@@ -79,10 +79,11 @@ int exec(const CommandLine& commandLine)
     if (commandLine.arguments.empty()) {
         return 0;
     }
-    const auto pid = fork();
-    if (pid) { // Parent
+    childPid = fork();
+    if (childPid) { // Parent
         int wstatus;
         wait(&wstatus);
+        childPid = 0;
         if (WIFEXITED(wstatus)) {
             return WEXITSTATUS(wstatus);
         }
@@ -96,5 +97,13 @@ int exec(const CommandLine& commandLine)
         std::cerr << commandLine.arguments[0] << ": " << strerror(errno) << std::endl;
         std::exit(EXIT_FAILURE);
     }
+}
+
+int kill()
+{
+    if (childPid) {
+        return ::kill(childPid, SIGTERM);
+    }
+    return 0;
 }
 }

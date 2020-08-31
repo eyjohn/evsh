@@ -8,7 +8,9 @@ using namespace evsh;
 
 int main(int argc, char* argv[])
 {
-    std::signal(SIGINT, SIG_IGN);
+    std::signal(SIGINT, [](auto signum) {
+        kill();
+    });
     const auto commandRegistry = defaultCommandRegistry();
     for (;;) {
         std::string line;
